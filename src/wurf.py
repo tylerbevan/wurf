@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#  woof -- an ad-hoc single file webserver
+#  wurf -- an ad-hoc single file webserver
 
 
 from __future__ import annotations
@@ -155,9 +155,9 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         txt = b"""\
               <!DOCTYPE html>
               <html>
-                <head><title>Woof Upload</title></head>
+                <head><title>Wurf Upload</title></head>
                 <body>
-                  <h1>Woof Upload complete</title></h1>
+                  <h1>Wurf Upload complete</title></h1>
                   <p>Thanks a lot!</p>
                 </body>
               </html>
@@ -180,9 +180,9 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             txt = b"""\
                  <!DOCTYPE html>
                  <html>
-                   <head><title>Woof Upload</title></head>
+                   <head><title>Wurf Upload</title></head>
                    <body>
-                     <h1>Woof Upload</title></h1>
+                     <h1>Wurf Upload</title></h1>
                      <form name="upload" method="POST" enctype="multipart/form-data">
                        <p><input type="file" name="upfile" /></p>
                        <p><input type="submit" value="Upload!" /></p>
@@ -363,15 +363,15 @@ def usage(defport, defmaxdown, errmsg=None):
 
     When -s is specified instead of a filename, %s distributes itself.
 
-    When -U is specified, woof provides an upload form, allowing file uploads.
+    When -U is specified, wurf provides an upload form, allowing file uploads.
 
     defaults: count = %d, port = %d
 
-    If started with an url as an argument, woof acts as a client,
+    If started with an url as an argument, wurf acts as a client,
     downloading the file and saving it in the current directory.
 
-    You can specify different defaults in two locations: /etc/woofrc
-    and ~/.woofrc can be INI-style config files containing the default
+    You can specify different defaults in two locations: /etc/wurfrc
+    and ~/.wurfrc can be INI-style config files containing the default
     port and the default count. The file in the home directory takes
     precedence. The compression methods are "off", "gz", "bz2" or "zip".
 
@@ -393,7 +393,7 @@ def usage(defport, defmaxdown, errmsg=None):
     sys.exit(1)
 
 
-def woof_client(url):
+def wurf_client(url):
     urlparts = urllib.parse.urlparse(url, "http")
     if urlparts[0] not in ["http", "https"] or urlparts[1] == "":
         return None
@@ -421,7 +421,7 @@ def woof_client(url):
         fname = urlparts[2]
 
     if not fname:
-        fname = "woof-out.bin"
+        fname = "wurf-out.bin"
 
     if fname:
         fname = urllib.parse.unquote(fname)
@@ -479,7 +479,14 @@ def main():
     ip_addr = ""
 
     config = configparser.ConfigParser()
-    config.read(["/etc/woofrc", os.path.expanduser("~/.woofrc")])
+    config.read(
+        [
+            "/etc/woofrc",
+            "/etc/wurfrc",
+            os.path.expanduser("~/.woofrc"),
+            os.path.expanduser("~/.wurfrc"),
+        ]
+    )
 
     if config.has_option("main", "port"):
         port = config.getint("main", "port")
@@ -570,7 +577,7 @@ def main():
 
     else:
         if len(filenames) == 1:
-            if woof_client(filenames[0]) != None:
+            if wurf_client(filenames[0]) != None:
                 sys.exit(0)
 
             filename = os.path.abspath(filenames[0])

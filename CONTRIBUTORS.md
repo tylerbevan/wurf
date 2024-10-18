@@ -1,5 +1,20 @@
 ## Contributors
 
+### wurf
+
+Maintainer: Sébastien Santoro <dereckson@nasqueron.org>
+
+They have contributed to wurf:
+
+  - Jens Korte <korte@free.de>
+  - CoolCat467
+
+Third-party documentation incorporated into wurf:
+
+  - Andrea Colangelo <warp10@ubuntu.com> - man page
+
+### woof
+
 Original author: Simon Budig <simon@budig.de>
 
 They have contributed to wurf during the woof era:

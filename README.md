@@ -1,4 +1,6 @@
-# Simply exchange files with WOOF
+# wurf - Web Upload and Receive Files
+
+## Rationale
 
 I guess everybody with a laptop has experienced this problem at some
 point: You plug into a network and just want to exchange files with
@@ -15,34 +17,34 @@ extremely helpful, provided that both parties have it installed,
 [SAFT](http://www.belwue.de/projekte/saft/)
 also aims to solve this problem, but needs a permanently running daemon...
 
-**Woof** (Web Offer One File) tries a different approach. It
+**wurf** (Web Upload and Receive Files) tries a different approach. It
 assumes that everybody has a web-browser or a commandline web-client
-installed. **Woof** is a small simple stupid webserver that can
+installed. The **wurf** command is a small simple webserver that can
 easily be invoked on a single file. Your partner can access the file
 with tools he trusts (e.g. **wget**). No need to enter
 passwords on keyboards where you don't know about keyboard sniffers, no
 need to start a huge lot of infrastructure, just do a
 ```
-     $ woof filename
+     $ wurf filename
 ```
-and tell the recipient the URL **woof** spits out. When he got that
-file, **woof** will quit and everything is done.
+and tell the recipient the URL **wurf** spits out. When he got that
+file, **wurf** will quit and everything is done.
 
-And when someone wants to send you a file, **woof** has a switch
-to offer itself, so he can get **woof** and offer a file to you.
+And when someone wants to send you a file, **wurf** has a switch
+to offer itself, so he can get **wurf** and offer a file to you.
 
-### Prerequisites and usage
+## Prerequisites and usage
 
-**Woof** needs Python on a unix'ish operating system. Some people
+**wurf** needs Python on a unix'ish operating system. Some people
 have used it successfully on Windows within the cygwin environment.
 
 ```
-    Usage: woof [-i <ip_addr>] [-p <port>] [-c <count>] <file>
-           woof [-i <ip_addr>] [-p <port>] [-c <count>] [-z|-j|-Z|-u] <dir>
-           woof [-i <ip_addr>] [-p <port>] [-c <count>] -s
-           woof [-i <ip_addr>] [-p <port>] [-c <count>] -U
+    Usage: wurf [-i <ip_addr>] [-p <port>] [-c <count>] <file>
+           wurf [-i <ip_addr>] [-p <port>] [-c <count>] [-z|-j|-Z|-u] <dir>
+           wurf [-i <ip_addr>] [-p <port>] [-c <count>] -s
+           wurf [-i <ip_addr>] [-p <port>] [-c <count>] -U
    
-           woof <url>
+           wurf <url>
 
     Serves a single file <count> times via http on port <port> on IP
     address <ip_addr>.
@@ -52,17 +54,17 @@ have used it successfully on Windows within the cygwin environment.
     You can configure your default compression method in the configuration 
     file described below.
 
-    When -s is specified instead of a filename, woof distributes itself.
+    When -s is specified instead of a filename, wurf distributes itself.
 
-    When -U is specified, woof provides an upload form, allowing file uploads.
+    When -U is specified, wurf provides an upload form, allowing file uploads.
    
     defaults: count = 1, port = 8080
 
-    If started with an url as an argument, woof acts as a client,
+    If started with an url as an argument, wurf acts as a client,
     downloading the file and saving it in the current directory.
 
-    You can specify different defaults in two locations: /etc/woofrc
-    and ~/.woofrc can be INI-style config files containing the default
+    You can specify different defaults in two locations: /etc/wurfrc
+    and ~/.wurfrc can be INI-style config files containing the default
     port and the default count. The file in the home directory takes
     precedence. The compression methods are "off", "gz", "bz2" or "zip".
 
@@ -75,3 +77,6 @@ have used it successfully on Windows within the cygwin environment.
         compressed = gz
 ```
 
+## Credits
+
+wurf is a fork of woof by Simon Budig <simon@budig.de>

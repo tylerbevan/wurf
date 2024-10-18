@@ -1,17 +1,17 @@
-.TH "woof" "1" "Last Modified: November 22, 2022"
+.TH "wurf" "1" "Last Modified: October 18, 2024"
 .SH NAME
-\fBwoof\fP \- A small, simple, stupid webserver to share files 
+\fBwurf\fP \- A small, simple, stupid webserver to share files
 
 .SH SYNOPSIS
-.B woof
-.RI [ options ] " file" 
+.B wurf
+.RI [ options ] " file"
 
 .SH DESCRIPTION
-\fBwoof\fP is a tool to copy files between hosts. It can 
-serve a specified file on HTTP,just for a given number of times, and then 
-shutdown. It can be easily used to share files across the computers on a 
-net, and given that the other ends should have just a browser, it can share 
-stuff between different operating system, or different devices (e.g.: a 
+\fBwurf\fP is a tool to copy files between hosts. It can
+serve a specified file on HTTP,just for a given number of times, and then
+shutdown. It can be easily used to share files across the computers on a
+net, and given that the other ends should have just a browser, it can share
+stuff between different operating system, or different devices (e.g.: a
 smartphone). It can also show a simple html form in order to upload a file.
 commands.
 
@@ -43,14 +43,14 @@ Used on a directory, it creates a tarball with ZIP compression
 Used on a directory, it creates a tarball with no compression
 .TP
 .B \-s
-Used to distribute woof itself
+Used to distribute wurf itself
 .TP
 .B \-U
-woof provides an upload form and allows uploading files
+wurf provides an upload form and allows uploading files
 
 .SH FILES
-You can specify different defaults in two locations: /etc/woofrc
-and ~/.woofrc can be INI-style config files containing the default
+You can specify different defaults in two locations: /etc/wurfrc
+and ~/.wurfrc can be INI-style config files containing the default
 port and the default count. The file in the home directory takes
 precedence. The compression methods are "off", "gz", "bz2" or "zip".
 
@@ -63,7 +63,8 @@ precedence. The compression methods are "off", "gz", "bz2" or "zip".
         compressed = gz
 
 .SH AUTHOR
-woof was written by Simon Budig <simon@budig.de>
+wurf is maintained by Sébastien Santoro <dereckson@nasqueron.org>,
+based on woof source code written by Simon Budig <simon@budig.de>.
 
 This manual page was written by Andrea Colangelo <warp10@ubuntu.com>,
 for the Debian project (and may be used by others).
