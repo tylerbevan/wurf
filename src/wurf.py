@@ -366,11 +366,10 @@ def usage(defport, defmaxdown, errmsg=None):
     name = os.path.basename(sys.argv[0])
     print(
         """
-    Usage: %s [-i <ip_addr>] [-p <port>] [-c <count>] <file>
-           %s [-i <ip_addr>] [-p <port>] [-c <count>] [-z|-j|-Z|-u] <dir>
-           %s [-i <ip_addr>] [-p <port>] [-c <count>] [-t [--cert <cert file>] [--key <key file>] [--keypass <key password>]] <file>
-           %s [-i <ip_addr>] [-p <port>] [-c <count>] -s
-           %s [-i <ip_addr>] [-p <port>] [-c <count>] -U
+    Usage: %s [-i <ip_addr>] [-p <port>] [-c <count>] [-t [--cert <cert_file>] [--key <key_file>] [--keypass <key_pass>]] <file>
+           %s [-i <ip_addr>] [-p <port>] [-c <count>] [-t [--cert <cert_file>] [--key <key_file>] [--keypass <key_pass>]] [-z|-j|-Z|-u] <dir>
+           %s [-i <ip_addr>] [-p <port>] [-c <count>] [-t [--cert <cert_file>] [--key <key_file>] [--keypass <key_pass>]] -s
+           %s [-i <ip_addr>] [-p <port>] [-c <count>] [-t [--cert <cert_file>] [--key <key_file>] [--keypass <key_pass>]] -U
 
            %s <url>
 
@@ -410,6 +409,7 @@ def usage(defport, defmaxdown, errmsg=None):
         [tls]
         cert = /etc/letsencrypt/live/example.com/fullchain.pem
         key = /etc/letsencrypt/live/example.com/privkey.pem
+        keypass = my_password
    """
         % (name, name, name, name, name, name, name, defmaxdown, defport),
         file=sys.stderr,

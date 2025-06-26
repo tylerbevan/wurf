@@ -1,4 +1,4 @@
-.TH "wurf" "1" "Last Modified: October 18, 2024"
+.TH "wurf" "1" "Last Modified: June 25, 2025"
 .SH NAME
 \fBwurf\fP \- A small, simple, stupid webserver to share files
 
@@ -45,6 +45,18 @@ Used on a directory, it creates a tarball with no compression
 .B \-s
 Used to distribute wurf itself
 .TP
+.B \-t
+Enables TLS mode
+.TP
+.B \--cert <cert_file>
+With -t, specifies a pem formatted certificate file
+.TP
+.B \--key <key_file>
+With -t, specifies a pem formatted key file
+.TP
+.B \--keypass <key_password>
+With -t, specifies the key password
+.TP
 .B \-U
 wurf provides an upload form and allows uploading files
 
@@ -61,6 +73,12 @@ precedence. The compression methods are "off", "gz", "bz2" or "zip".
         count = 2
         ip = 127.0.0.1
         compressed = gz
+        tls = on
+
+        [tls]
+        cert = /etc/letsencrypt/live/example.com/fullchain.pem
+        key = /etc/letsencrypt/live/example.com/privkey.pem
+        keypass = my_password
 
 .SH AUTHOR
 wurf is maintained by Sébastien Santoro <dereckson@nasqueron.org>,
