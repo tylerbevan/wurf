@@ -14,11 +14,16 @@ import configparser
 import shutil, tarfile, zipfile
 import struct
 from io import BytesIO, StringIO
+import ssl
 
 maxdownloads = 1
 cpid = -1
 compressed = "gz"
 upload = False
+tls = False
+cert = ""
+key = ""
+keypass = ""
 
 
 # Utility function to guess the IP (as a string) where the server can be
@@ -325,21 +330,36 @@ def serve_files(filename, maxdown=1, ip_addr="", port=8080):
             "cannot bind to IP address '%s' port %d" % (ip_addr, port), file=sys.stderr
         )
         sys.exit(1)
-
+    listen_protocol = "https" if tls else "http"
     if not ip_addr:
         ip_addr = find_ip()
     if ip_addr:
         if filename:
-            location = f"http://{ip_addr}:{httpd.server_port}/" + urllib.parse.quote(
+            location = f"{listen_protocol}://{ip_addr}:{httpd.server_port}/" + urllib.parse.quote(
                 os.path.basename(filename + archive_ext)
             )
         else:
-            location = "http://%s:%s/" % (ip_addr, httpd.server_port)
+            location = "%s://%s:%s/" % (listen_protocol, ip_addr, httpd.server_port)
 
         print("Now serving on %s" % location)
+    if tls :
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        try:
+            context.load_cert_chain(cert, key, keypass)
+        except ssl.SSLError:
+            print("Unable to load certificate or key. Possibly missing or incorrect password.")
+            sys.exit(1)
+        except FileNotFoundError:
+            print("Certificate or Key file is inaccessible or incorrect.")
+            sys.exit(1)
 
-    while cpid != 0 and maxdownloads > 0:
-        httpd.handle_request()
+        with context.wrap_socket(httpd.socket, server_side=True) as ssock:
+            httpd.socket = ssock
+            while cpid != 0 and maxdownloads > 0:
+                httpd.handle_request()
+    else:
+        while cpid != 0 and maxdownloads > 0:
+            httpd.handle_request()
 
 
 def usage(defport, defmaxdown, errmsg=None):
@@ -348,6 +368,7 @@ def usage(defport, defmaxdown, errmsg=None):
         """
     Usage: %s [-i <ip_addr>] [-p <port>] [-c <count>] <file>
            %s [-i <ip_addr>] [-p <port>] [-c <count>] [-z|-j|-Z|-u] <dir>
+           %s [-i <ip_addr>] [-p <port>] [-c <count>] [-t [--cert <cert file>] [--key <key file>] [--keypass <key password>]] <file>
            %s [-i <ip_addr>] [-p <port>] [-c <count>] -s
            %s [-i <ip_addr>] [-p <port>] [-c <count>] -U
 
@@ -360,6 +381,8 @@ def usage(defport, defmaxdown, errmsg=None):
     -j for bzip2 compression, -Z for ZIP compression or -u for no compression.
     You can configure your default compression method in the configuration
     file described below.
+
+    When -t is specified, wurf will use TLS to secure the connection. You must pass both a certificate and key in PEM format.
 
     When -s is specified instead of a filename, %s distributes itself.
 
@@ -382,8 +405,13 @@ def usage(defport, defmaxdown, errmsg=None):
         count = 2
         ip = 127.0.0.1
         compressed = gz
+        tls = on
+
+        [tls]
+        cert = /etc/letsencrypt/live/example.com/fullchain.pem
+        key = /etc/letsencrypt/live/example.com/privkey.pem
    """
-        % (name, name, name, name, name, name, defmaxdown, defport),
+        % (name, name, name, name, name, name, name, defmaxdown, defport),
         file=sys.stderr,
     )
 
@@ -472,7 +500,7 @@ def wurf_client(url):
 
 
 def main():
-    global cpid, upload, compressed
+    global cpid, upload, compressed, tls, cert, key, keypass
 
     maxdown = 1
     port = 8080
@@ -510,11 +538,32 @@ def main():
         compressed = config.get("main", "compressed")
         compressed = formats.get(compressed, "gz")
 
+    if config.has_option("main", "tls"):
+        affirm = {
+            "yes": True,
+            "true": True,
+            "enabled": True,
+            "on": True
+        }
+        tls_setting = config.get("main", "tls")
+        tls = affirm.get(tls_setting, False)
+        if not config.has_option("main", "port"):
+            port = 8443
+
+    if config.has_option("tls", "cert"):
+        cert = config.get("tls", "cert")
+
+    if config.has_option("tls", "key"):
+        key = config.get("tls", "key")
+
+    if config.has_option("tls", "keypass"):
+        keypass = config.get("tls", "keypass")
+
     defaultport = port
     defaultmaxdown = maxdown
 
     try:
-        options, filenames = getopt.gnu_getopt(sys.argv[1:], "hUszjZui:c:p:")
+        options, filenames = getopt.gnu_getopt(sys.argv[1:], "hUszjZuti:c:p:", ["cert=", "key=", "keypass="])
     except getopt.GetoptError as desc:
         usage(defaultport, defaultmaxdown, desc)
 
@@ -563,6 +612,17 @@ def main():
         elif option == "-u":
             compressed = ""
 
+        elif option == "-t":
+            tls = True
+            if '-p' not in dict(options) and not config.has_option("main", "port"):
+                port = 8443
+        elif option == "--cert":
+            cert = val
+        elif option == "--key":
+            key = val
+        elif option == "--keypass":
+            keypass = val
+
         else:
             usage(defaultport, defaultmaxdown, "Unknown option: %r" % option)
 
@@ -598,6 +658,14 @@ def main():
                 defaultport,
                 defaultmaxdown,
                 "%s: Neither file nor directory" % filenames[0],
+            )
+
+    if tls:
+        if cert == "" or key == "":
+            usage(
+                defaultport,
+                defaultmaxdown,
+                "Missing option, TLS requested but certificate/key pair not provided",
             )
 
     serve_files(filename, maxdown, ip_addr, port)
