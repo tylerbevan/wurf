@@ -41,6 +41,7 @@ have used it successfully on Windows within the cygwin environment.
 ```
     Usage: wurf [-i <ip_addr>] [-p <port>] [-c <count>] <file>
            wurf [-i <ip_addr>] [-p <port>] [-c <count>] [-z|-j|-Z|-u] <dir>
+           wurf [-i <ip_addr>] [-p <port>] [-c <count>] [-t [--cert <cert file>] [--key <key file>] [--keypass <key password>]] <file>
            wurf [-i <ip_addr>] [-p <port>] [-c <count>] -s
            wurf [-i <ip_addr>] [-p <port>] [-c <count>] -U
    
@@ -53,6 +54,8 @@ have used it successfully on Windows within the cygwin environment.
     -j for bzip2 compression, -Z for ZIP compression or -u for no compression.
     You can configure your default compression method in the configuration 
     file described below.
+
+    When -t is specified, wurf will use TLS to secure the connection. You must pass both a certificate and key in PEM format.
 
     When -s is specified instead of a filename, wurf distributes itself.
 
@@ -75,6 +78,11 @@ have used it successfully on Windows within the cygwin environment.
         count = 2
         ip = 127.0.0.1
         compressed = gz
+        tls = on
+
+        [tls]
+        cert = /etc/letsencrypt/live/example.com/fullchain.pem
+        key = /etc/letsencrypt/live/example.com/privkey.pem
 ```
 
 ## Credits
