@@ -411,7 +411,7 @@ def usage(defport, defmaxdown, errmsg=None):
         key = /etc/letsencrypt/live/example.com/privkey.pem
         keypass = my_password
    """
-        % (name, name, name, name, name, name, name, defmaxdown, defport),
+        % (name, name, name, name, name, name, defmaxdown, defport),
         file=sys.stderr,
     )
 
